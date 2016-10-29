@@ -4,14 +4,25 @@
 static const int RESOLUTION_W = 1024;
 static const int RESOLUTION_H = 720;
 
-void update(sf::Clock &clock)
-{
+static const sf::Color BACKGROUND_COLOR = sf::Color(253, 253, 253);
 
+void handleEvents(sf::RenderWindow &window)
+{
+	sf::Event event;
+	while (window.pollEvent(event))
+		if (event.type == sf::Event::Closed)
+			window.close();
 }
 
-void render(sf::RenderWindow &window, ArrayOfRects &myRects)
+void update(sf::Clock &clock)
 {
-	drawRects(window, myRects);
+}
+
+void render(sf::RenderWindow &window, Shapes &myShapes)
+{
+	window.clear(BACKGROUND_COLOR);
+	drawRects(window, myShapes);
+	window.display();
 }
 
 int main()
@@ -19,15 +30,16 @@ int main()
 	sf::RenderWindow window(sf::VideoMode(RESOLUTION_W, RESOLUTION_H), "Animation", sf::Style::Titlebar + sf::Style::Close);
 	window.setKeyRepeatEnabled(false);
 
-	ArrayOfRects myRects;
+	Shapes myShapes;
 	sf::Clock clock;
 
-	initializeRects(myRects);
+	initializeRects(myShapes);
 
 	while (window.isOpen())
 	{
+		handleEvents(window);
 		update(clock);
-		render(window, myRects);
+		render(window, myShapes);
 	}
 
 	return 0;

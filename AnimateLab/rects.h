@@ -1,12 +1,13 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
-static const int SHAPES_COUNT = 6;
-
-struct ArrayOfRects
+struct Shapes
 {
-	sf::RectangleShape shape[SHAPES_COUNT];
+	static const size_t CAPACITY = 6;
+
+	size_t SIZE;
+	sf::RectangleShape items[CAPACITY];
 };
 
-void initializeRects(ArrayOfRects &myRects);
-void drawRects(sf::RenderWindow &window, ArrayOfRects &myRects);
+void initializeRects(Shapes &shapes);
+void drawRects(sf::RenderWindow &window, Shapes &shapes);
