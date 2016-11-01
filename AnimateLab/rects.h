@@ -5,6 +5,7 @@ struct Shapes
 {
 	static const size_t CAPACITY = 6;
 	float moveing;
+	float chengeAlpha;
 
 	size_t SIZE;
 	sf::RectangleShape items[CAPACITY];

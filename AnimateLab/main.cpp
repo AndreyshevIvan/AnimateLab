@@ -11,7 +11,8 @@ static const int RESOLUTION_H = 720;
 static const sf::Color BACKGROUND_COLOR = sf::Color(253, 253, 253);
 
 static const float MOV_LENGTH = 300;
-static const float MOVSPEED = 100;
+static const float MOVSPEED = 120;
+static const float CHENGING_ALPHA_SPEED = 325;
 
 struct Timer
 {
@@ -43,6 +44,7 @@ void update(Timer &timer, Shapes &myShapes)
 	timer.Restart();
 	timer.timeLeft += elapsedTime;
 	myShapes.moveing = elapsedTime * MOVSPEED;
+	myShapes.chengeAlpha = elapsedTime * CHENGING_ALPHA_SPEED;
 
 	if (timer.timeLeft <= 2.0f)
 		firstMov(myShapes);
@@ -50,8 +52,8 @@ void update(Timer &timer, Shapes &myShapes)
 	if (timer.timeLeft > 2.0f && timer.timeLeft <= 4.0f)
 		secondMov(myShapes);
 
-	if (timer.timeLeft > 4.0f && timer.timeLeft <= 6.0f)
-		thirdMov(myShapes);
+	//if (timer.timeLeft > 4.0f && timer.timeLeft <= 6.0f)
+	//	thirdMov(myShapes);
 }
 
 void render(sf::RenderWindow &window, Shapes &myShapes)

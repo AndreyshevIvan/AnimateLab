@@ -1,4 +1,5 @@
 #include "rects.h"
+#include <iostream>
 
 static const float SHAPE_SIDE_SIZE = 40;
 static const sf::Vector2f START_POS = { 0, 0 };
@@ -14,6 +15,8 @@ void initializeRects(Shapes &myShapes)
 		myShapes.items[itemNumber].setPosition(0, itemNumber * (SHAPE_SIDE_SIZE + SHAPES_MARGIN) + SHAPE_SIDE_SIZE / 2.0);
 		myShapes.items[itemNumber].setFillColor(SHAPE_START_COLOR);
 	}
+	myShapes.chengeAlpha = 0;
+	myShapes.chengeAlpha = 0;
 }
 
 void drawRects(sf::RenderWindow &window, Shapes &myShapes)
@@ -31,7 +34,12 @@ void firstMov(Shapes &myShapes)
 void secondMov(Shapes &myShapes)
 {
 	for (size_t itemNumber = 0; itemNumber < myShapes.CAPACITY; itemNumber++)
+	{
+		sf::Color currentColor = myShapes.items[itemNumber].getFillColor();
 		myShapes.items[itemNumber].move(myShapes.moveing, myShapes.moveing);
+		myShapes.items[itemNumber].setFillColor(sf::Color(102, 0, 102, currentColor.a - (unsigned int)myShapes.chengeAlpha));
+		std::cout << currentColor.a << " " << (unsigned int)myShapes.chengeAlpha << "\n";
+	}
 }
 
 void thirdMov(Shapes &myShapes)
