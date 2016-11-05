@@ -1,49 +1,112 @@
 #include "rects.h"
 #include <iostream>
 
-static const float SHAPE_SIDE_SIZE = 40;
-static const sf::Vector2f START_POS = { 0, 0 };
-static const sf::Color SHAPE_START_COLOR = sf::Color(102, 0, 102, 255);
-static const float SHAPES_MARGIN = 10;
+static const int RESOLUTION_W = 1024;
+static const int RESOLUTION_H = 720;
 
-void initializeRects(Shapes &myShapes)
+static const float RECT_SIDE_SIZE = 40;
+static const float RECT_MARGIN = 10;
+static const sf::Vector2f START_POS = { RESOLUTION_W / 2.0f, RESOLUTION_H / 5.0f };
+static const sf::Color RECT_START_COLOR = sf::Color(102, 0, 102, 255);
+
+static const float MOVE_LENGTH = 100;
+static const float COMPRESSION = 10;
+static const float ITEM_ROTATE_ANGLE = 90;
+
+void initRects(Rects &rects, const float &animateTime)
 {
-	for (size_t itemNumber = 0; itemNumber < myShapes.CAPACITY; itemNumber++)
+	for (size_t itemNumber = 0; itemNumber < rects.CAPACITY; itemNumber++)
 	{
-		myShapes.items[itemNumber].setSize({ SHAPE_SIDE_SIZE , SHAPE_SIDE_SIZE });
-		myShapes.items[itemNumber].setOrigin({ SHAPE_SIDE_SIZE / 2.0 , SHAPE_SIDE_SIZE / 2.0 });
-		myShapes.items[itemNumber].setPosition(0, itemNumber * (SHAPE_SIDE_SIZE + SHAPES_MARGIN) + SHAPE_SIDE_SIZE / 2.0);
-		myShapes.items[itemNumber].setFillColor(SHAPE_START_COLOR);
+		rects.items[itemNumber].setSize({ RECT_SIDE_SIZE , RECT_SIDE_SIZE });
+		rects.items[itemNumber].setOrigin({ RECT_SIDE_SIZE / 2.0 , RECT_SIDE_SIZE / 2.0 });
+		rects.items[itemNumber].setPosition(START_POS.x + RECT_SIDE_SIZE / 2.0, START_POS.y + itemNumber * (RECT_SIDE_SIZE + RECT_MARGIN) + RECT_SIDE_SIZE / 2.0);
+		rects.items[itemNumber].setFillColor(RECT_START_COLOR);
 	}
-	myShapes.chengeAlpha = 0;
-	myShapes.chengeAlpha = 0;
+	rects.animateTime = animateTime;
 }
 
-void drawRects(sf::RenderWindow &window, Shapes &myShapes)
+void drawRects(sf::RenderWindow &window, Rects &rects)
 {
-	for (size_t itemNumber = 0; itemNumber < myShapes.CAPACITY; itemNumber++)
-		window.draw(myShapes.items[itemNumber]);
+	for (size_t itemNumber = 0; itemNumber < rects.CAPACITY; itemNumber++)
+		window.draw(rects.items[itemNumber]);
 }
 
-void firstMov(Shapes &myShapes)
+void goRight(Rects &rects, const float &elapsedTime)
 {
-	for (size_t itemNumber = 0; itemNumber < myShapes.CAPACITY; itemNumber++)
-		myShapes.items[itemNumber].move(myShapes.moveing, 0);
+	const float movement = elapsedTime * MOVE_LENGTH;
+	for (size_t itemNumber = 0; itemNumber < rects.CAPACITY; itemNumber++)
+		rects.items[itemNumber].move(movement, 0);
 }
 
-void secondMov(Shapes &myShapes)
+void goLeft(Rects &rects, const float &elapsedTime)
 {
-	for (size_t itemNumber = 0; itemNumber < myShapes.CAPACITY; itemNumber++)
+	const float movement = elapsedTime * MOVE_LENGTH;
+	for (size_t itemNumber = 0; itemNumber < rects.CAPACITY; itemNumber++)
+		rects.items[itemNumber].move(-movement, 0);
+}
+
+void goUp(Rects &rects, const float &elapsedTime)
+{
+	const float movement = elapsedTime * MOVE_LENGTH;
+	for (size_t itemNumber = 0; itemNumber < rects.CAPACITY; itemNumber++)
+		rects.items[itemNumber].move(0, -movement);
+}
+
+void goDown(Rects &rects, const float &elapsedTime)
+{
+	const float movement = elapsedTime * MOVE_LENGTH;
+	for (size_t itemNumber = 0; itemNumber < rects.CAPACITY; itemNumber++)
+		rects.items[itemNumber].move(0, movement);
+}
+
+void compression(Rects &rects, const float &elapsedTime)
+{
+	for (size_t itemNumber = 0; itemNumber < rects.CAPACITY; itemNumber++)
+		rects.items[itemNumber].setSize({ RECT_SIDE_SIZE , rects.items[itemNumber].getSize().y - RECT_SIDE_SIZE / 2.0f * elapsedTime / rects.animateTime });
+}
+
+void expansion(Rects &rects, const float &elapsedTime)
+{
+	for (size_t itemNumber = 0; itemNumber < rects.CAPACITY; itemNumber++)
+		rects.items[itemNumber].setSize({ RECT_SIDE_SIZE , rects.items[itemNumber].getSize().y + RECT_SIDE_SIZE / 2.0f * elapsedTime / rects.animateTime });
+}
+
+void rotateItemsClockwise(Rects &rects, const float &elapsedTime)
+{
+	for (size_t itemNumber = 0; itemNumber < rects.CAPACITY; itemNumber++)
+		rects.items[itemNumber].rotate(ITEM_ROTATE_ANGLE / rects.animateTime * elapsedTime);
+}
+
+void rotateItemsCounterclockwise(Rects &rects, const float &elapsedTime)
+{
+	for (size_t itemNumber = 0; itemNumber < rects.CAPACITY; itemNumber++)
+		rects.items[itemNumber].rotate(-1 * ITEM_ROTATE_ANGLE / rects.animateTime * elapsedTime);
+}
+
+void rotateRectSystemClockwise(Rects &rects, const float &elapsedTime)
+{
+	const float itemsCount = sizeof(rects.items) / sizeof(rects.items[0]);
+	const float radiusCoefficient = 2.5; 
+	for (size_t itemNumber = 0; itemNumber < rects.CAPACITY; itemNumber++)
 	{
-		sf::Color currentColor = myShapes.items[itemNumber].getFillColor();
-		myShapes.items[itemNumber].move(myShapes.moveing, myShapes.moveing);
-		myShapes.items[itemNumber].setFillColor(sf::Color(102, 0, 102, currentColor.a - (unsigned int)myShapes.chengeAlpha));
-		std::cout << currentColor.a << " " << (unsigned int)myShapes.chengeAlpha << "\n";
+		const float movement = elapsedTime * (radiusCoefficient - itemNumber) * ((RECT_SIDE_SIZE + RECT_MARGIN) / rects.animateTime);
+		if (itemNumber < itemsCount / 2)
+			rects.items[itemNumber].move(movement, movement);
+		else
+			rects.items[itemNumber].move(movement, movement);
 	}
 }
 
-void thirdMov(Shapes &myShapes)
+void rotateRectSystemCounterclockwise(Rects &rects, const float &elapsedTime)
 {
-	for (size_t itemNumber = 0; itemNumber < myShapes.CAPACITY; itemNumber++)
-		myShapes.items[itemNumber].move(myShapes.moveing, myShapes.moveing);
+	const float itemsCount = sizeof(rects.items) / sizeof(rects.items[0]);
+	const float radiusCoefficient = 2.5;
+	for (size_t itemNumber = 0; itemNumber < rects.CAPACITY; itemNumber++)
+	{
+		const float movement = elapsedTime * (radiusCoefficient - itemNumber) * ((RECT_SIDE_SIZE + RECT_MARGIN) / rects.animateTime);
+		if (itemNumber < itemsCount / 2)
+			rects.items[itemNumber].move(-movement, -movement);
+		else
+			rects.items[itemNumber].move(-movement, -movement);
+	}
 }
