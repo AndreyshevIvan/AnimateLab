@@ -1,18 +1,9 @@
-#include <SFML/Graphics.hpp>
 #include "rects.h"
+#include "constants.h"
+#include <SFML/Graphics.hpp>
 #include <ctime>
 #include <functional>
-#include <queue>
 #include <iostream>
-
-static const int RESOLUTION_W = 1024;
-static const int RESOLUTION_H = 720;
-
-static const sf::Color BACKGROUND_COLOR = sf::Color(253, 253, 253);
-
-static const float TIME_FOR_ONE_ANIMATE = 1.5;
-static const float MOV_LENGTH = 300;
-static const float CHENGING_ALPHA_SPEED = 325;
 
 struct GameBehavior
 {
@@ -28,53 +19,53 @@ struct GameSystem
 	int currentBehavior;
 };
 
-
 void initBehaviors(GameSystem &system)
 {
 	system.behaviors[0].onUpdate = [&](float elapsedTime) {
-		goLeft(system.rects, elapsedTime);
-		rotateItemsClockwise(system.rects, elapsedTime);
+		goMotion(system.rects, elapsedTime, 1);
+		rotateItems(system.rects, elapsedTime, 0);
 	};
 	system.behaviors[1].onUpdate = [&](float elapsedTime) {
-		rotateRectSystemClockwise(system.rects, elapsedTime);
+		straightTurn(system.rects, elapsedTime, 0);
 	};
 	system.behaviors[2].onUpdate = [&](float elapsedTime) {
-		goLeft(system.rects, elapsedTime);
-		goDown(system.rects, elapsedTime);
-		// colorAnimate
+		goMotion(system.rects, elapsedTime, 1);
+		goMotion(system.rects, elapsedTime, 3);
+		transparencyChenge(system.rects, elapsedTime, 0);
 	};
 	system.behaviors[3].onUpdate = [&](float elapsedTime) {
-		rotateRectSystemCounterclockwise(system.rects, elapsedTime);
+		straightTurn(system.rects, elapsedTime, 1);
 	};
 	system.behaviors[4].onUpdate = [&](float elapsedTime) {
-		goRight(system.rects, elapsedTime);
-		compression(system.rects, elapsedTime);
+		goMotion(system.rects, elapsedTime, 0);
+		deformation(system.rects, elapsedTime, 0);
 	}; 
 	system.behaviors[5].onUpdate = [&](float elapsedTime) {
-		rotateRectSystemClockwise(system.rects, elapsedTime);
-		rotateItemsCounterclockwise(system.rects, elapsedTime);
+		straightTurn(system.rects, elapsedTime, 0);
+		rotateItems(system.rects, elapsedTime, 1);
 	};
 	system.behaviors[6].onUpdate = [&](float elapsedTime) {
-		goRight(system.rects, elapsedTime);
-		goDown(system.rects, elapsedTime);
-		expansion(system.rects, elapsedTime);
-		rotateItemsClockwise(system.rects, elapsedTime);
+		goMotion(system.rects, elapsedTime, 0);
+		goMotion(system.rects, elapsedTime, 3);
+		deformation(system.rects, elapsedTime, 1);
+		rotateItems(system.rects, elapsedTime, 0);
 	};
 	system.behaviors[7].onUpdate = [&](float elapsedTime) {
-		goUp(system.rects, elapsedTime);
-		rotateRectSystemCounterclockwise(system.rects, elapsedTime);
+		goMotion(system.rects, elapsedTime, 2);
+		straightTurn(system.rects, elapsedTime, 1);
 	};
 	system.behaviors[8].onUpdate = [&](float elapsedTime) {
-		rotateItemsCounterclockwise(system.rects, elapsedTime);
+		rotateItems(system.rects, elapsedTime, 1);
 	};
 	system.behaviors[9].onUpdate = [&](float elapsedTime) {
-		goUp(system.rects, elapsedTime);
+		goMotion(system.rects, elapsedTime, 2);
+		transparencyChenge(system.rects, elapsedTime, 1);
 	};
 }
 
 void initGameSystem(GameSystem &system)
 {
-	initRects(system.rects, TIME_FOR_ONE_ANIMATE);
+	initRects(system.rects);
 	initBehaviors(system);
 	system.time = 0;
 	system.currentBehavior = 0;
@@ -92,7 +83,7 @@ void update(GameSystem &system)
 {
 	const float arrSize = sizeof(system.behaviors) / sizeof(system.behaviors[0]);
 	const float elapsedTime = system.clock.getElapsedTime().asSeconds();
-	std::cout << elapsedTime << "\n";
+
 	system.clock.restart();
 	system.time += elapsedTime;
 

@@ -21,15 +21,12 @@
     <ClCompile Include="rects.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="controller.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="rects.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="controller.h">
+    <ClInclude Include="constants.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
