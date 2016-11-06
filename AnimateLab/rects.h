@@ -4,7 +4,7 @@
 struct Rects
 {
 	static const size_t CAPACITY = 6;
-	float alphaChenge;
+	float alphaChenge = 0;
 
 	size_t SIZE;
 	sf::RectangleShape items[CAPACITY];

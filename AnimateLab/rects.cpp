@@ -11,7 +11,6 @@ void initRects(Rects &rects)
 		rects.items[itemNumber].setPosition(START_POS.x + RECT_SIDE_SIZE / 2.0, START_POS.y + itemNumber * (RECT_SIDE_SIZE + RECT_MARGIN) + RECT_SIDE_SIZE / 2.0);
 		rects.items[itemNumber].setFillColor(RECT_START_COLOR);
 	}
-	rects.alphaChenge = 0;
 }
 
 void drawRects(sf::RenderWindow &window, Rects &rects)
@@ -101,18 +100,16 @@ void transparencyChenge(Rects &rects, const float &elapsedTime, int mode) // mod
 
 	rects.alphaChenge += (elapsedTime * TRANSPARENCY_CHENGE / TIME_FOR_ONE_ANIMATE);
 
+	if (mode == 0)
+		newAlpha = RECT_START_COLOR.a - static_cast<sf::Uint8>(rects.alphaChenge);
+	if (mode == 1)
+		newAlpha = RECT_START_COLOR.a - static_cast<sf::Uint8>(TRANSPARENCY_CHENGE) + static_cast<sf::Uint8>(rects.alphaChenge);
+
 	for (size_t itemNumber = 0; itemNumber < rects.CAPACITY; itemNumber++)
 	{
 		rect = &rects.items[itemNumber];
-
-		if (mode == 0)
-			newAlpha = RECT_START_COLOR.a - static_cast<sf::Uint8>(rects.alphaChenge);
-		if (mode == 1)
-			newAlpha = RECT_START_COLOR.a - static_cast<sf::Uint8>(TRANSPARENCY_CHENGE) + static_cast<sf::Uint8>(rects.alphaChenge);
-
 		rect->setFillColor(sf::Color(RECT_START_COLOR.r, RECT_START_COLOR.g, RECT_START_COLOR.b, newAlpha));
 	}
-
 	if (rects.alphaChenge >= TRANSPARENCY_CHENGE)
 		rects.alphaChenge = 0;
 }

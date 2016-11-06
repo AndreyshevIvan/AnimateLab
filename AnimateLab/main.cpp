@@ -117,7 +117,9 @@ void enterGameLoop(GameSystem &system, sf::RenderWindow &window)
 
 int main()
 {
-	sf::RenderWindow window(sf::VideoMode(RESOLUTION_W, RESOLUTION_H), "Animate Rects", sf::Style::Titlebar + sf::Style::Close);
+	sf::ContextSettings settings;
+	settings.antialiasingLevel = 8;
+	sf::RenderWindow window(sf::VideoMode(RESOLUTION_W, RESOLUTION_H), "Animate Rects", sf::Style::Titlebar + sf::Style::Close, settings);
 	window.setKeyRepeatEnabled(false);
 
 	GameSystem animateRects;
