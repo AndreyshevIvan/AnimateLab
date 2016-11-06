@@ -126,6 +126,6 @@ int main()
 	initGameSystem(animateRects);
 
 	enterGameLoop(animateRects, window);
-	
+
 	return 0;
 }

@@ -98,18 +98,16 @@ void transparencyChenge(Rects &rects, const float &elapsedTime, int mode) // mod
 	sf::RectangleShape *rect;
 	sf::Uint8 newAlpha = 255;
 
-	rects.alphaChenge += (elapsedTime * TRANSPARENCY_CHENGE / TIME_FOR_ONE_ANIMATE);
-
 	if (mode == 0)
-		newAlpha = RECT_START_COLOR.a - static_cast<sf::Uint8>(rects.alphaChenge);
+		rects.alphaChenge += (elapsedTime * TRANSPARENCY_CHENGE / TIME_FOR_ONE_ANIMATE);
 	if (mode == 1)
-		newAlpha = RECT_START_COLOR.a - static_cast<sf::Uint8>(TRANSPARENCY_CHENGE) + static_cast<sf::Uint8>(rects.alphaChenge);
+		rects.alphaChenge -= (elapsedTime * TRANSPARENCY_CHENGE / TIME_FOR_ONE_ANIMATE);
+
+	newAlpha = RECT_START_COLOR.a - static_cast<sf::Uint8>(rects.alphaChenge);
 
 	for (size_t itemNumber = 0; itemNumber < rects.CAPACITY; itemNumber++)
 	{
 		rect = &rects.items[itemNumber];
 		rect->setFillColor(sf::Color(RECT_START_COLOR.r, RECT_START_COLOR.g, RECT_START_COLOR.b, newAlpha));
 	}
-	if (rects.alphaChenge >= TRANSPARENCY_CHENGE)
-		rects.alphaChenge = 0;
 }
