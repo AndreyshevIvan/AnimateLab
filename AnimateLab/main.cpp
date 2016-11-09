@@ -4,62 +4,62 @@
 #include <ctime>
 #include <functional>
 #include <iostream>
+#include <array>
 
-struct GameBehavior
-{
-	std::function<void(float dt)> onUpdate;
-};
+typedef std::function<void(float dt)> GameBehavior;
 
 struct GameSystem
 {
 	sf::Clock clock;
 	float time;
 	Rects rects;
-	GameBehavior behaviors[10];
-	int currentBehavior;
+	std::array<GameBehavior, 10> behaviors;
+	int currentBehaviorIndex;
 };
 
 void initBehaviors(GameSystem &system)
 {
-	system.behaviors[0].onUpdate = [&](float elapsedTime) {
-		goMotion(system.rects, elapsedTime, 1);
-		rotateItems(system.rects, elapsedTime, 0);
-	};
-	system.behaviors[1].onUpdate = [&](float elapsedTime) {
-		straightTurn(system.rects, elapsedTime, 0);
-	};
-	system.behaviors[2].onUpdate = [&](float elapsedTime) {
-		goMotion(system.rects, elapsedTime, 1);
-		goMotion(system.rects, elapsedTime, 3);
-		transparencyChenge(system.rects, elapsedTime, 0);
-	};
-	system.behaviors[3].onUpdate = [&](float elapsedTime) {
-		straightTurn(system.rects, elapsedTime, 1);
-	};
-	system.behaviors[4].onUpdate = [&](float elapsedTime) {
-		goMotion(system.rects, elapsedTime, 0);
-		deformation(system.rects, elapsedTime, 0);
-	}; 
-	system.behaviors[5].onUpdate = [&](float elapsedTime) {
-		straightTurn(system.rects, elapsedTime, 0);
-		rotateItems(system.rects, elapsedTime, 1);
-	};
-	system.behaviors[6].onUpdate = [&](float elapsedTime) {
-		goMotion(system.rects, elapsedTime, 0);
-		goMotion(system.rects, elapsedTime, 3);
-		deformation(system.rects, elapsedTime, 1);
-		rotateItems(system.rects, elapsedTime, 0);
-	};
-	system.behaviors[7].onUpdate = [&](float elapsedTime) {
-		goMotion(system.rects, elapsedTime, 2);
-		straightTurn(system.rects, elapsedTime, 1);
-	};
-	system.behaviors[8].onUpdate = [&](float elapsedTime) {
-		rotateItems(system.rects, elapsedTime, 1);
-	};
-	system.behaviors[9].onUpdate = [&](float elapsedTime) {
-		goMotion(system.rects, elapsedTime, 2);
-		transparencyChenge(system.rects, elapsedTime, 1);
+	system.behaviors = { 
+		[&](float elapsedTime) {
+			goMotion(system.rects, elapsedTime, 1);
+			rotateItems(system.rects, elapsedTime, 0);
+		},
+		[&](float elapsedTime) {
+			straightTurn(system.rects, elapsedTime, 0);
+		},
+		[&](float elapsedTime) {
+			goMotion(system.rects, elapsedTime, 1);
+			goMotion(system.rects, elapsedTime, 3);
+			transparencyChenge(system.rects, elapsedTime, 0);
+		},
+		[&](float elapsedTime) {
+			straightTurn(system.rects, elapsedTime, 1);
+		},
+		[&](float elapsedTime) {
+			goMotion(system.rects, elapsedTime, 0);
+			deformation(system.rects, elapsedTime, 0);
+		},
+		[&](float elapsedTime) {
+			straightTurn(system.rects, elapsedTime, 0);
+			rotateItems(system.rects, elapsedTime, 1);
+		},
+		[&](float elapsedTime) {
+			goMotion(system.rects, elapsedTime, 0);
+			goMotion(system.rects, elapsedTime, 3);
+			deformation(system.rects, elapsedTime, 1);
+			rotateItems(system.rects, elapsedTime, 0);
+		},
+		[&](float elapsedTime) {
+			goMotion(system.rects, elapsedTime, 2);
+			straightTurn(system.rects, elapsedTime, 1);
+		},
+		[&](float elapsedTime) {
+			rotateItems(system.rects, elapsedTime, 1);
+		},
+		[&](float elapsedTime) {
+			goMotion(system.rects, elapsedTime, 2);
+			transparencyChenge(system.rects, elapsedTime, 1);
+		}
 	};
 }
 
@@ -68,7 +68,7 @@ void initGameSystem(GameSystem &system)
 	initRects(system.rects);
 	initBehaviors(system);
 	system.time = 0;
-	system.currentBehavior = 0;
+	system.currentBehaviorIndex = 0;
 }
 
 void handleEvents(sf::RenderWindow &window)
@@ -89,13 +89,13 @@ void update(GameSystem &system)
 
 	if (system.time >= TIME_FOR_ONE_ANIMATE)
 	{
-		system.currentBehavior++;
+		system.currentBehaviorIndex++;
 		system.time = 0;
-		if (system.currentBehavior == arrSize)
-			system.currentBehavior = 0;
+		if (system.currentBehaviorIndex == arrSize)
+			system.currentBehaviorIndex = 0;
 	}
 
-	system.behaviors[system.currentBehavior].onUpdate(elapsedTime);
+	system.behaviors[system.currentBehaviorIndex](elapsedTime);
 }
 
 void render(GameSystem &system, sf::RenderWindow &window)
